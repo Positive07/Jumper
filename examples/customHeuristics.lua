@@ -22,8 +22,8 @@ myFinder:setHeuristic('MANHATTAN')
 
 -- Custom
 local h = function(nodeA, nodeB)
-	return (0.1 * (math.abs(nodeA:getX() - nodeB:getX()))
-	      + 0.9 * (math.abs(nodeA:getY() - nodeB:getY())))
+  return (0.1 * (math.abs(nodeA:getX() - nodeB:getX()))
+        + 0.9 * (math.abs(nodeA:getY() - nodeB:getY())))
 end
 myFinder:setHeuristic(h)
 

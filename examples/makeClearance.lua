@@ -3,16 +3,16 @@
 local Grid = require 'jumper.grid'
 local PF = require 'jumper.pathfinder'
 local map = {
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,1,0},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,1,0,0,0,0,0,0},
-	{0,0,1,0,0,0,0,0,2,0},
-	{0,0,1,1,1,0,0,2,0,0},
-	{0,0,0,1,1,0,2,0,0,2},
-	{0,0,0,0,1,0,0,0,0,2},
-	{0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0}
+  {0,0,0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0,1,0},
+  {0,0,0,0,0,0,0,0,0,0},
+  {0,0,0,1,0,0,0,0,0,0},
+  {0,0,1,0,0,0,0,0,2,0},
+  {0,0,1,1,1,0,0,2,0,0},
+  {0,0,0,1,1,0,2,0,0,2},
+  {0,0,0,0,1,0,0,0,0,2},
+  {0,0,0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0,0,0}
 }
 local grid = Grid(map)
 local walkable = function(v) return v~=2 end
@@ -20,12 +20,12 @@ local finder = PF(grid, 'ASTAR',walkable)
 finder:annotateGrid()
 
 for y = 1, #map do
-	local s = ''
-	for x = 1, #map[y] do
-	  local node = grid:getNodeAt(x,y)
-		s = (s .. ' ' .. node:getClearance(walkable))
-	end
-	print(s)
+  local s = ''
+  for x = 1, #map[y] do
+    local node = grid:getNodeAt(x,y)
+    s = (s .. ' ' .. node:getClearance(walkable))
+  end
+  print(s)
 end
 
 -- Expected output

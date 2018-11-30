@@ -8,26 +8,26 @@
 
 
 if (...) then
-	
+
   -- Dependencies
-	local _PATH = (...):match('(.+)%.path$')
+  local _PATH = (...):match('(.+)%.path$')
   local Heuristic = require (_PATH .. '.heuristics')
-	
-	 -- Local references
+
+   -- Local references
   local abs, max = math.abs, math.max
-	local t_insert, t_remove = table.insert, table.remove
-	
-	--- The `Path` class.<br/>
-	-- This class is callable.
-	-- Therefore, <em><code>Path(...)</code></em> acts as a shortcut to <em><code>Path:new(...)</code></em>.
-	-- @type Path
+  local t_insert, t_remove = table.insert, table.remove
+
+  --- The `Path` class.<br/>
+  -- This class is callable.
+  -- Therefore, <em><code>Path(...)</code></em> acts as a shortcut to <em><code>Path:new(...)</code></em>.
+  -- @type Path
   local Path = {}
   Path.__index = Path
 
   --- Inits a new `path`.
   -- @class function
   -- @treturn path a `path`
-	-- @usage local p = Path()
+  -- @usage local p = Path()
   function Path:new()
     return setmetatable({_nodes = {}}, Path)
   end
@@ -37,11 +37,11 @@ if (...) then
   -- @class function
   -- @treturn node a `node`
   -- @treturn int the count for the number of nodes
-	-- @see Path:nodes
-	-- @usage
-	-- for node, count in p:iter() do
-	--   ...
-	-- end
+  -- @see Path:nodes
+  -- @usage
+  -- for node, count in p:iter() do
+  --   ...
+  -- end
   function Path:iter()
     local i,pathLen = 1,#self._nodes
     return function()
@@ -51,24 +51,24 @@ if (...) then
       end
     end
   end
-  
+
   --- Iterates on each single `node` along a `path`. At each step of iteration,
   -- returns a `node` plus a count value. Alias for @{Path:iter}
   -- @class function
-	-- @name Path:nodes
+  -- @name Path:nodes
   -- @treturn node a `node`
   -- @treturn int the count for the number of nodes
-	-- @see Path:iter	
-	-- @usage
-	-- for node, count in p:nodes() do
-	--   ...
-	-- end	
-	Path.nodes = Path.iter
-	
+  -- @see Path:iter
+  -- @usage
+  -- for node, count in p:nodes() do
+  --   ...
+  -- end
+  Path.nodes = Path.iter
+
   --- Evaluates the `path` length
   -- @class function
   -- @treturn number the `path` length
-	-- @usage local len = p:getLength()
+  -- @usage local len = p:getLength()
   function Path:getLength()
     local len = 0
     for i = 2,#self._nodes do
@@ -76,28 +76,28 @@ if (...) then
     end
     return len
   end
-	
-	--- Counts the number of steps.
-	-- Returns the number of waypoints (nodes) in the current path.
-	-- @class function
-	-- @tparam node node a node to be added to the path
-	-- @tparam[opt] int index the index at which the node will be inserted. If omitted, the node will be appended after the last node in the path.
-	-- @treturn path self (the calling `path` itself, can be chained)
-	-- @usage local nSteps = p:countSteps()
-	function Path:addNode(node, index)
-		index = index or #self._nodes+1
-		t_insert(self._nodes, index, node)
-		return self
-	end
-	
-	
+
+  --- Counts the number of steps.
+  -- Returns the number of waypoints (nodes) in the current path.
+  -- @class function
+  -- @tparam node node a node to be added to the path
+  -- @tparam[opt] int index the index at which the node will be inserted. If omitted, the node will be appended after the last node in the path.
+  -- @treturn path self (the calling `path` itself, can be chained)
+  -- @usage local nSteps = p:countSteps()
+  function Path:addNode(node, index)
+    index = index or #self._nodes+1
+    t_insert(self._nodes, index, node)
+    return self
+  end
+
+
   --- `Path` filling modifier. Interpolates between non contiguous nodes along a `path`
   -- to build a fully continuous `path`. This maybe useful when using search algorithms such as Jump Point Search.
   -- Does the opposite of @{Path:filter}
   -- @class function
-	-- @treturn path self (the calling `path` itself, can be chained)	
+  -- @treturn path self (the calling `path` itself, can be chained)
   -- @see Path:filter
-	-- @usage p:fill()
+  -- @usage p:fill()
   function Path:fill()
     local i = 2
     local xi,yi,dx,dy
@@ -115,15 +115,15 @@ if (...) then
       end
       if i>N then break end
     end
-		return self
+    return self
   end
 
-  --- `Path` compression modifier. Given a `path`, eliminates useless nodes to return a lighter `path` 
-	-- consisting of straight moves. Does the opposite of @{Path:fill}
+  --- `Path` compression modifier. Given a `path`, eliminates useless nodes to return a lighter `path`
+  -- consisting of straight moves. Does the opposite of @{Path:fill}
   -- @class function
-	-- @treturn path self (the calling `path` itself, can be chained)	
+  -- @treturn path self (the calling `path` itself, can be chained)
   -- @see Path:fill
-	-- @usage p:filter()
+  -- @usage p:filter()
   function Path:filter()
     local i = 2
     local xi,yi,dx,dy, olddx, olddy
@@ -141,58 +141,58 @@ if (...) then
         end
       else break end
     end
-		return self
+    return self
   end
-	
+
   --- Clones a `path`.
   -- @class function
   -- @treturn path a `path`
-	-- @usage local p = path:clone()	
-	function Path:clone()
-		local p = Path:new()
-		for node in self:nodes() do p:addNode(node) end
-		return p
-	end
-	
+  -- @usage local p = path:clone()
+  function Path:clone()
+    local p = Path:new()
+    for node in self:nodes() do p:addNode(node) end
+    return p
+  end
+
   --- Checks if a `path` is equal to another. It also supports *filtered paths* (see @{Path:filter}).
   -- @class function
-	-- @tparam path p2 a path
+  -- @tparam path p2 a path
   -- @treturn boolean a boolean
-	-- @usage print(myPath:isEqualTo(anotherPath))
-	function Path:isEqualTo(p2)
-		local p1 = self:clone():filter()
-		local p2 = p2:clone():filter()
-		for node, count in p1:nodes() do
-			if not p2._nodes[count] then return false end
-			local n = p2._nodes[count]
-			if n._x~=node._x or n._y~=node._y then return false end
-		end	
-		return true
-	end
-	
+  -- @usage print(myPath:isEqualTo(anotherPath))
+  function Path:isEqualTo(p2)
+    local p1 = self:clone():filter()
+    local p2 = p2:clone():filter()
+    for node, count in p1:nodes() do
+      if not p2._nodes[count] then return false end
+      local n = p2._nodes[count]
+      if n._x~=node._x or n._y~=node._y then return false end
+    end
+    return true
+  end
+
   --- Reverses a `path`.
   -- @class function
-	-- @treturn path self (the calling `path` itself, can be chained)
-	-- @usage myPath:reverse()	
-	function Path:reverse()
-		local _nodes = {}
-		for i = #self._nodes,1,-1 do
-			_nodes[#_nodes+1] = self._nodes[i]		
-		end
-		self._nodes = _nodes
-		return self
-	end	
+  -- @treturn path self (the calling `path` itself, can be chained)
+  -- @usage myPath:reverse()
+  function Path:reverse()
+    local _nodes = {}
+    for i = #self._nodes,1,-1 do
+      _nodes[#_nodes+1] = self._nodes[i]
+    end
+    self._nodes = _nodes
+    return self
+  end
 
   --- Appends a given `path` to self.
   -- @class function
-	-- @tparam path p a path
-	-- @treturn path self (the calling `path` itself, can be chained)
-	-- @usage myPath:append(anotherPath)		
-	function Path:append(p)
-		for node in p:nodes() do self:addNode(node)	end
-		return self
-	end
-	
+  -- @tparam path p a path
+  -- @treturn path self (the calling `path` itself, can be chained)
+  -- @usage myPath:append(anotherPath)
+  function Path:append(p)
+    for node in p:nodes() do self:addNode(node)	end
+    return self
+  end
+
   return setmetatable(Path,
     {__call = function(self,...)
       return Path:new(...)
